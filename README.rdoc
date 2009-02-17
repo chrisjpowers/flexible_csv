@@ -1,0 +1,30 @@
+= FlexibleCsv
+
+The FlexibleCsv gem uses the FasterCSV gem to parse user created CSV files that may not have standard headers. For example, you know there's an email address column somewhere in there, but it may be called "Email" or "Email Address" or "email-address", and it might be in the first column, but it might be in the third.
+
+== Examples
+
+These CSV data snippets have the same data but are formatted much differently. Using FlexibleCsv to map possible column names to data nodes, these differences become negligible.
+  
+  require 'flexible_csv'
+  
+  # Arbitrary CSV data
+  csv_data1 = %Q{Full Name, Email Address\nJohn Doe, john@doe.com}
+  csv_data2 = %Q{Email, Name\njohn@doe.com, John Doe}
+  
+  parser = FlexibleCsv.new do |csv|
+    csv.column :full_name, "Name", "Full Name", "Client Name"
+    csv.column :email, "Email", "Email Address"
+  end
+  
+  collection1 = []
+  
+  parser.parse(csv_data1).each do |row|
+    puts row.full_name #=> 'John Doe'
+    puts row.email     #=> 'john@doe.com'
+  end
+  
+  parser.parse(csv_data2).each do |row|
+    puts row.full_name #=> 'John Doe'
+    puts row.email     #=> 'john@doe.com'
+  end

@@ -1,0 +1,36 @@
+require 'rubygems'
+require 'spec'
+require 'activesupport'
+
+require File.join(File.dirname(__FILE__), '..', 'lib', 'flexible_csv.rb')
+
+describe FlexibleCsv do
+  
+  before :each do
+    @csv_data1 = %Q{Full Name, Email Address\nJohn Doe, john@doe.com\nJane Doe, jane@doe.com}
+    @csv_data2 = %Q{First Name, Last Name, Email\nJohn, Doe, john@doe.com\nJane, Doe, jane@doe.com}
+    
+    @parser = FlexibleCsv.new do |csv|
+      csv.column :full_name, "Name", "Full Name", "Client Name"
+      csv.column :first_name, "First Name", "First"
+      csv.column :last_name, "Last Name", "Last"
+      csv.column :email, "Email", "Email Address"
+    end
+  end
+  
+  it "should work with example 1" do
+    @parser.parse(@csv_data1).each do |row|
+      row.full_name.should_not be_blank
+      row.email.should_not be_blank
+    end
+  end
+  
+  it "should work with example 2" do
+    @parser.parse(@csv_data2).each do |row|
+      row.first_name.should_not be_blank
+      row.last_name.should_not be_blank
+      row.email.should_not be_blank
+    end
+  end
+  
+end

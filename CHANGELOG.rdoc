@@ -1,0 +1,6 @@
+= FlexibleCsv CHANGELOG
+ 
+== Version 0.1
+ * First try
+ * Super lame tests, but they work
+ * Minimal documentation
