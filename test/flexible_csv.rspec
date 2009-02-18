@@ -20,8 +20,8 @@ describe FlexibleCsv do
   
   it "should work with example 1" do
     @parser.parse(@csv_data1).each do |row|
-      row.full_name.should_not be_blank
-      row.email.should_not be_blank
+      row["full_name"].should_not be_blank
+      row["email"].should_not be_blank
     end
   end
   

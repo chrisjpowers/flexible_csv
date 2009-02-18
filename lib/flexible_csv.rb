@@ -1,7 +1,8 @@
 class FlexibleCsv
-  require 'rubygems'
   require 'faster_csv'
+  require 'hacks.rb'
   
+  # a Hash where the key is the method name, and the value is the array of possible headers
   attr_reader :column_hash
   
   def initialize
@@ -49,10 +50,8 @@ class FlexibleCsv
     str.to_s.downcase.gsub(/[^a-z0-9]/, '')
   end
   
-  # This is the enumerator class for looping through CSV rows
+  # Wrapper class around the FasterCSV object
   class Parser
-    
-    include Enumerable
     
     def initialize(data, csv_parent)
       column_headers = []
@@ -60,55 +59,23 @@ class FlexibleCsv
       fcsv = FasterCSV.new(data.is_a?(String) ? data : data.read, :headers => true)
 
       # reformat headers to remove punctuation, capitalization and white space
-      # This block doesn't run until fcsv.read is used
+      # Change header labels to the key used in the column config
       fcsv.header_convert do |field| 
         f = csv_parent.clean_up(field)
-        column_headers << f
+        csv_parent.column_hash.each_pair do |k,v|
+          f = k.to_s and break if v.include?(f)
+        end
         f
       end
       
       @table = fcsv.read
-            
-      @final_map = {}
-      column_headers.each do |ch|
-        csv_parent.column_hash.each_pair do |k,v|
-          @final_map[k] = ch and break if v.include?(ch)
-        end
-      end
     end
     
-    # loops through CSV rows, yields block to a new Row object for each CSV row
-    def each
-      @table.each do |row|
-        my_row = Row.new(row, @final_map)
-        yield my_row
-      end
-    end
-    
-    # Provides a simple key/value interface by method name or bracket access
-    class Row
-      def initialize(csv_row, map)
-        @map = map
-        @csv_row = csv_row
-      end
-      
-      def [](key)
-        find_value(key)
-      end
-      
-      def method_missing(method_name)
-        find_value(method_name)
-      end
-      
-      private
-      
-      def find_value(key)
-        @csv_row[@map[key]]
-      end
+    # proxy other methods to the @table object
+    def method_missing(method_name, *args, &block)
+      @table.send(method_name, *args, &block)
     end
     
   end
-  
-  
   
 end

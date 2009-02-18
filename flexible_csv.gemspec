@@ -1,6 +1,6 @@
 Gem::Specification.new do |s|
   s.name = 'flexible_csv'
-  s.version = '0.0.1'
+  s.version = '0.2'
   s.author = 'Chris Powers'
   s.date = "2009-02-17"
   s.homepage = 'http://killswitchcollective.com'

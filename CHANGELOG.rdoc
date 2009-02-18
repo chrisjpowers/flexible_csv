@@ -4,3 +4,6 @@
  * First try
  * Super lame tests, but they work
  * Minimal documentation
+ 
+== Version 0.2
+ * Significant rewrite of Parser class, removed Row class and leveraging FasterCSV's Row class
