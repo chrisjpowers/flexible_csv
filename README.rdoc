@@ -1,5 +1,7 @@
 = FlexibleCsv
 
+<em>Chris Powers, The Killswitch Collective (http://killswitchcollective.com/blog/authors/chris_powers)</em>
+
 The FlexibleCsv gem uses the FasterCSV gem to parse user created CSV files that may not have standard headers. For example, you know there's an email address column somewhere in there, but it may be called "Email" or "Email Address" or "email-address", and it might be in the first column, but it might be in the third.
 
 == Examples
@@ -16,9 +18,7 @@ These CSV data snippets have the same data but are formatted much differently. U
     csv.column :full_name, "Name", "Full Name", "Client Name"
     csv.column :email, "Email", "Email Address"
   end
-  
-  collection1 = []
-  
+    
   parser.parse(csv_data1).each do |row|
     puts row.full_name #=> 'John Doe'
     puts row.email     #=> 'john@doe.com'
@@ -27,4 +27,58 @@ These CSV data snippets have the same data but are formatted much differently. U
   parser.parse(csv_data2).each do |row|
     puts row.full_name #=> 'John Doe'
     puts row.email     #=> 'john@doe.com'
+  end
+
+== Using Adapters
+
+What if simply mapping header names to values is not enough? What if you need more translation logic? Instead of baking in complex rule functionality into FlexibleCsv, I am strongly suggesting users use their own adapter classes to wrap up this logic.
+
+For example, let's say that some of your CSV files have a column for each contact's full name, but other have a separate column for first and last name:
+
+  require 'flexible_csv'
+
+  # Arbitrary CSV data
+  csv_data1 = %Q{Full Name\nJohn Doe}
+  csv_data2 = %Q{First Name, Last Name\nJohn,Doe}
+
+  parser = FlexibleCsv.new do |csv|
+    csv.column :full_name, "Name", "Full Name", "Client Name"
+    csv.column :first_name, "First Name", "First"
+    csv.column :last_name, "Last Name", "Last", "Surname"
+  end
+
+  class CsvAdapter
+    def initialize(row)
+      @row = row
+    end
+    
+    def full_name
+      row.full_name || "#{row.first_name} #{row.last_name}"
+    end
+    
+    def last_name
+      row.last_name || row.full_name.split(' ').last
+    end
+    
+    def first_name
+      row.first_name || row.full_name.split(' ').first
+    end
+    
+    def method_missing(method_name, *args)
+      row.send(method_name, *args)
+    end
+  end
+
+  parser.parse(csv_data1).each do |row|
+    ad_row = CsvAdapter.new(row)
+    puts ad_row.full_name  #=> 'John Doe'
+    puts ad_row.first_name #=> 'John'
+    puts ad_row.last_name  #=> 'Doe'
+  end
+
+  parser.parse(csv_data2).each do |row|
+    ad_row = CsvAdapter.new(row)
+    puts ad_row.full_name  #=> 'John Doe'
+    puts ad_row.first_name #=> 'John'
+    puts ad_row.last_name  #=> 'Doe'
   end

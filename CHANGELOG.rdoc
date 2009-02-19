@@ -7,3 +7,6 @@
  
 == Version 0.2
  * Significant rewrite of Parser class, removed Row class and leveraging FasterCSV's Row class
+
+== Version 0.2.1
+ * Added documentation about using Adapter classes
