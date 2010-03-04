@@ -1,10 +1,10 @@
 Gem::Specification.new do |s|
   s.name = 'flexible_csv'
-  s.version = '0.2.1'
+  s.version = '0.2.2'
   s.author = 'Chris Powers'
-  s.date = "2009-02-17"
-  s.homepage = 'http://killswitchcollective.com'
-  s.email = 'chris@killswitchcollective.com'
+  s.date = "2010-03-05"
+  s.homepage = 'http://github.com/chrisjpowers/flexible_csv'
+  s.email = 'chrisjpowers@gmail.com'
   s.summary = 'The FlexibleCsv gem uses the FasterCSV gem to parse user created CSV files that may not have standard headers.'
   s.files = ['README.rdoc', 'CHANGELOG.rdoc', 'LICENSE', 'lib/flexible_csv.rb', 'lib/hacks.rb', 'test/flexible_csv.rspec']
   s.require_paths = ["lib"]
