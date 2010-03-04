@@ -1,8 +1,14 @@
 = FlexibleCsv
 
-<em>Chris Powers, The Killswitch Collective (http://killswitchcollective.com/blog/authors/chris_powers)</em>
+<em>Created by Chris Powers</em>
 
 The FlexibleCsv gem uses the FasterCSV gem to parse user created CSV files that may not have standard headers. For example, you know there's an email address column somewhere in there, but it may be called "Email" or "Email Address" or "email-address", and it might be in the first column, but it might be in the third.
+
+== Install
+
+This gem is hosted by gemcutter.org, so just:
+
+  gem install flexible_csv
 
 == Examples
 
